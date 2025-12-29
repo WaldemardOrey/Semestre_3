@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Waldemar's Portfolio</title>
+     <link rel="icon" href="./icone.png" type="image/png">
+
+    <title>Waldemar's Portfolio S3</title>
+    <!-- Police Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icônes Lucide (Version CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -19,9 +27,13 @@
               sans: ['Poppins', 'sans-serif'],
             },
             animation: {
-              'rainbow': 'arcoiris 3s linear infinite',
+              'fadeIn': 'fadeIn 0.5s ease-out forwards',
             },
             keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
               arcoiris: {
                 '0%': { backgroundPosition: '0% 50%' },
                 '100%': { backgroundPosition: '100% 50%' },
@@ -31,8 +43,12 @@
         }
       }
     </script>
+
     <style>
-      /* Custom styles for specific animations that are tricky in pure Tailwind utility classes */
+      html {
+        scroll-behavior: smooth;
+      }
+      
       .rainbow-text:hover {
         background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet);
         background-size: 400%;
@@ -40,28 +56,830 @@
         -webkit-text-fill-color: transparent;
         animation: arcoiris 3s linear infinite;
       }
+
+      /* Styles pour l'accordéon */
+      .accordion-content {
+        transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
       
-      @keyframes arcoiris {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 100% 50%; }
+      .accordion-content.open {
+        max-height: 5000px; /* Hauteur suffisante pour tout le contenu */
+        opacity: 1;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
       }
 
-      html {
-        scroll-behavior: smooth;
+      .chevron-icon {
+        transition: transform 0.3s ease;
       }
+      
+      .accordion-btn[aria-expanded="true"] .chevron-icon {
+        transform: rotate(180deg);
+      }
+
+      /* Utilitaires pour le contenu injecté dynamiquement */
+      .tp-action ul { list-style-type: disc; padding-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+      .tp-action li { margin-bottom: 0.25rem; }
     </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<body class="bg-white text-black font-sans">
+
+    <!-- NAVIGATION -->
+    <header class="bg-azul fixed w-full top-0 left-0 z-50 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 md:justify-center">
+          
+          <!-- Mobile menu button -->
+          <div class="flex md:hidden">
+            <button id="mobile-menu-btn" type="button" class="text-white hover:text-gray-200 focus:outline-none p-2">
+              <span class="sr-only">Ouvrir le menu</span>
+              <i data-lucide="menu" class="w-6 h-6 icon-menu"></i>
+              <i data-lucide="x" class="w-6 h-6 icon-x hidden"></i>
+            </button>
+          </div>
+
+          <!-- Desktop Nav -->
+          <nav class="hidden md:flex space-x-8">
+            <a href="#sobre" class="text-white font-bold text-lg transition-colors duration-300 rainbow-text">Qui suis je?</a>
+            <a href="#tps" class="text-white font-bold text-lg transition-colors duration-300 rainbow-text">Travaux Pratiques/SAÉ</a>
+            <a href="#xp" class="text-white font-bold text-lg transition-colors duration-300 rainbow-text">Expériences pro</a>
+            <a href="#contato" class="text-white font-bold text-lg transition-colors duration-300 rainbow-text">Contact</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Mobile Nav -->
+      <div id="mobile-menu" class="hidden md:hidden bg-azul pb-4">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col items-center">
+          <a href="#sobre" class="mobile-link text-white block px-3 py-2 rounded-md text-base font-bold hover:bg-azul-dark w-full text-center">Qui suis je?</a>
+          <a href="#tps" class="mobile-link text-white block px-3 py-2 rounded-md text-base font-bold hover:bg-azul-dark w-full text-center">Travaux Pratiques/SAÉ</a>
+          <a href="#xp" class="mobile-link text-white block px-3 py-2 rounded-md text-base font-bold hover:bg-azul-dark w-full text-center">Expériences pro</a>
+          <a href="#contato" class="mobile-link text-white block px-3 py-2 rounded-md text-base font-bold hover:bg-azul-dark w-full text-center">Contact</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section id="inicio" class="relative h-screen flex flex-col items-center justify-center text-center text-black px-4"
+            style="background: white center/cover no-repeat;">
+            <div class="absolute inset-0 bg-white/40"></div>
+
+            <div class="relative z-10 max-w-3xl">
+                <h1 class="text-4xl md:text-3xl font-bold mb-4 drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">
+                    Salut, je suis Waldemar D'OREY
+                </h1>
+                <h3 class="text-2xl md:text-3xl font-semibold mb-6 drop-shadow-[0_0_10px_rgba(0,240,255,0.8)] text-azul-dark">
+                    Futur ingénieur en Génie des Procédés
+                </h3>
+                <p class="text-lg md:text-xl font-medium mb-8 text-gray-800 leading-relaxed drop-shadow-sm">
+                    <a target="_blank" href="https://waldemardorey.github.io/Portfolio/"> ->ici pour voir projets première année<-- </a>
+                </p>
+                <button onclick="document.getElementById('tps').scrollIntoView({ behavior: 'smooth' })"
+                    class="bg-azul hover:bg-azul-dark text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                    Découvrez mes projets académiques S3
+                </button>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="sobre" class="py-20 px-6 bg-white text-center">
+            <div class="max-w-5xl mx-auto flex flex-col items-center">
+                <h2 class="text-3xl font-bold mb-10 text-black">Qui suis je?</h2>
+                
+                <div class="flex flex-col md:flex-row items-center gap-10 mb-12">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-azul to-purple-600 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                        <img src="./images/me.png" 
+                             onerror="this.src='https://picsum.photos/200/200'"
+                             alt="Waldemar d'Orey" 
+                             class="relative w-48 h-48 rounded-full object-cover shadow-lg border-4 border-white"/>
+                    </div>
+                    
+                    <div class="text-left text-gray-700 leading-relaxed space-y-4 md:w-2/3">
+                        <p>
+                            Salut tout le monde, moi c’est <strong>Waldemar d’Orey</strong>, 20 ans et originaire d’Angola. Mon parcours scolaire a commencé au Lycée São José do Cluny, où j'ai obtenu mon Baccalauréat général avec une solide base en sciences. Initialement orienté vers l'ingénierie pétrolière en Angola, j'ai saisi l'opportunité d'une <span class="text-azul font-bold">bourse d’excellence</span> pour venir en France et élargir mes horizons.
+                        </p>
+                        <p>
+                            Cette transition internationale m'a appris l'adaptabilité et la persévérance. Après un cours intensif de français et une remise à niveau scientifique à l’Université du Mans, j’ai rejoint l’IUT de Saint-Nazaire. Aujourd'hui, je me spécialise en <strong>Génie Chimique et Génie des Procédés</strong>. Mon ambition est de devenir un ingénieur capable d'optimiser les procédés industriels pour réduire leur empreinte écologique tout en maintenant leur efficacité.
+                        </p>
+                        <p>
+                            En dehors des sciences, je cultive un équilibre de vie grâce au sport (natation, badminton, gym) qui m'apporte discipline et gestion du stress. La musique et la lecture nourrissent ma curiosité intellectuelle et ma créativité.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mt-8">
+                    <!-- Langues -->
+                    <div class="bg-cinza-claro p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                        <h3 class="text-xl font-bold text-azul mb-4 flex items-center justify-center gap-2">
+                            <i data-lucide="globe" class="w-6 h-6"></i> Langues
+                        </h3>
+                        <ul class="space-y-3 text-left pl-4">
+                            <li class="flex justify-between">
+                                <span class="font-semibold">Portugais</span>
+                                <span class="text-gray-600">Langue maternelle</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-semibold">Français</span>
+                                <span class="text-gray-600">Niveau Avancé (C1)</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="font-semibold">Anglais</span>
+                                <span class="text-gray-600">Intermédiaire (B2)</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Savoir-être -->
+                    <div class="bg-cinza-claro p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                        <h3 class="text-xl font-bold text-azul mb-4 flex items-center justify-center gap-2">
+                            <i data-lucide="brain" class="w-6 h-6"></i> Savoir-être
+                        </h3>
+                        <div class="flex flex-wrap gap-2 justify-center">
+                            <span class="bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-700 shadow-sm">Adaptabilité culturelle</span>
+                            <span class="bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-700 shadow-sm">Rigueur scientifique</span>
+                            <span class="bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-700 shadow-sm">Travail d'équipe</span>
+                            <span class="bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-700 shadow-sm">Curiosité</span>
+                            <span class="bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-700 shadow-sm">Résolution de problèmes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACADEMICS SECTION -->
+        <section id="tps" class="py-20 px-4 bg-cinza-claro text-center">
+            <h2 class="text-3xl font-bold mb-6 text-black">Travaux Pratiques & Projets</h2>
+            
+            <div class="max-w-4xl mx-auto mb-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
+                    <i data-lucide="flask-conical" class="w-8 h-8 text-azul mb-2"></i>
+                    <h3 class="font-bold text-gray-800">Génie Chimique</h3>
+                    <p class="text-xs text-gray-500 mt-1">Réacteurs, Cinétique, Thermodynamique, Saponification</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
+                    <i data-lucide="settings" class="w-8 h-8 text-azul mb-2"></i>
+                    <h3 class="font-bold text-gray-800">Procédés & Séparation</h3>
+                    <p class="text-xs text-gray-500 mt-1">Colonnes à garnissage, Absorption, Distillation, Filtration</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
+                    <i data-lucide="calculator" class="w-8 h-8 text-azul mb-2"></i>
+                    <h3 class="font-bold text-gray-800">Outils & Analyse</h3>
+                    <p class="text-xs text-gray-500 mt-1">AutoCad 2d et 3d, ProSimPlus, pack Office, Chromatographie (CPG, HPLC), Spectro...</p>
+                </div>
+            </div>
+
+            <!-- Semestre 3 Accordion (Ouvert par défaut) -->
+            <div class="w-full max-w-3xl mx-auto mb-8">
+                <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-azul hover:bg-azul-dark text-white" aria-expanded="true">
+                    <span>Semestre 3 : Approfondissement Technique</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                </button>
+                <div class="accordion-content open bg-gray-50/50 rounded-lg border border-gray-200">
+                    <div class="p-4 space-y-6">
+                        <p class="text-gray-600 mb-6 italic text-sm">
+                            Ce semestre a marqué un tournant vers des applications industrielles concrètes, combinant théorie avancée et manipulation d'unités pilotes.
+                        </p>
+
+                        <!-- 1. Chimie Analytique -->
+                        <div class="w-full">
+                            <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-md">
+                                <span>Chimie Analytique</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="flex flex-col gap-3 p-2">
+                                    
+                                    <!-- Méthodes chromatographiques -->
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Méthodes chromatographiques</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/metdChrom1.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/metdChrom2.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">L’objectif de ce TP était de nous familiariser avec les principales méthodes chromatographiques (CCM, colonne, CPG) utilisées pour le contrôle de pureté et la purification des composés organiques.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Réalisation d'une <strong>Chromatographie sur Couche Mince (CCM)</strong> pour trouver le meilleur éluant (éther de pétrole vs acétone) afin de séparer le ferrocène et l’acétylferrocène.</li><li>Mise en œuvre d'une <strong>chromatographie sur colonne</strong> d'alumine pour purifier le mélange réactionnel.</li><li>Utilisation de la <strong>Chromatographie en Phase Gazeuse (CPG)</strong> pour identifier les constituants de mélanges inconnus (hydrocarbures et alcools) en analysant leurs temps de rétention.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Ce TP nous a permis de manipuler trois techniques complémentaires. Nous avons observé l’influence de la polarité et de la volatilité sur la séparation et réussi à identifier la composition du mélange inconnu (Éthanol, Cyclohexane, n-Heptane).</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cinétique enzymatique -->
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Cinétique enzymatique de l’invertase</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/3.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/4.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Étudier la cinétique de l’invertase (B-fructosidase), déterminer ses constantes cinétiques (Vm et Km) et évaluer l’influence des paramètres physico-chimiques (pH, température).</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Réalisation d'une gamme étalon pour doser le sucre inverti formé au DNS (réactif coloré).</li><li>Détermination des vitesses initiales (Vi) à différentes concentrations de substrat.</li><li>Tracé de la représentation de <strong>Lineweaver-Burk</strong> (1/Vi en fonction de 1/[S]) pour calculer Vmax (1,45 × 10⁻⁴ mol·L⁻¹·min⁻¹) et Km (0,021 mol·L⁻¹).</li><li>Tests d'activité à différents pH (optimum trouvé à 4,8) et étude de la dénaturation thermique à 55°C.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Nous avons caractérisé complètement l'enzyme. Les résultats confirment que l'invertase a un pH optimal acide et qu'elle est thermosensible (perte de 60% d'activité après 20 min à 55°C).</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Acides Gras -->
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Composition en Acides Gras des Huiles</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                  <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/5.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/6.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Déterminer la composition précise en acides gras de deux huiles alimentaires (colza et olive) par chromatographie en phase gazeuse (CPG).</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Transformation des triglycérides des huiles en <strong>esters méthyliques</strong> plus volatils par réaction de transestérification (NaOH/MeOH + BF3).</li><li>Extraction des esters dans l'heptane.</li><li>Injection en CPG et comparaison des temps de rétention obtenus avec ceux de standards connus (Palmitate, Stéarate, Oléate, Linoléate).</li><li>Calcul des pourcentages relatifs par intégration des aires des pics.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">L'analyse a révélé que l'acide oléique (C18:1) est majoritaire dans les deux huiles (environ 62-66%), ce qui est cohérent avec les étiquetages commerciaux et la théorie des huiles végétales.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- HPLC -->
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Analyse HPLC : Dosage acides (vins)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                  <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/7.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/8.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Évaluer la composition chimique de vins (rouge, blanc) et jus de raisin en dosant les acides organiques par HPLC et en déterminant l'acidité totale.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Utilisation de la <strong>HPLC en phase inversée (C18)</strong> avec détection UV à 210 nm.</li><li>Construction de courbes d'étalonnage pour les acides tartrique, malique, lactique, acétique et succinique.</li><li>Mesure du pH et titrage de l'acidité totale par la soude (NaOH).</li><li>Comparaison des profils chromatographiques des différents échantillons.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Nous avons constaté que le vin rouge est le plus acide, riche en acide tartrique. L'absence notable d'acide lactique dans nos échantillons indique que la fermentation malolactique n'avait pas eu lieu.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Gel filtration -->
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Gel filtration et dosage de vitamine C</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                  <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/9.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/10.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Séparer des molécules selon leur taille par chromatographie d'exclusion et doser la vitamine C par deux méthodes (chimique et enzymatique).</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Séparation sur gel <strong>Séphadex G25</strong> d'un mélange Protéines / Lactose / NaCl. Calcul des volumes d'élution et fraction de pores accessibles.</li><li>Dosage chimique de la vitamine C par titrage oxydimétrique au DCPIP (décoloration du bleu à l'incolore).</li><li>Dosage enzymatique spécifique utilisant l'ascorbate oxydase et le MTT.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">La chromatographie a permis une séparation efficace conforme à la taille des molécules. Les dosages de Vitamine C (~0,072 g/L) sont cohérents et valident la méthode enzymatique pour des milieux complexes.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Spectro IR -->
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Spectrométrie Infrarouge</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                  <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/11.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/12.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Identifier les bandes d'absorption caractéristiques des oligosaccharides (fructose, glucose, saccharose) et tenter une analyse quantitative par ATR-IR.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Acquisition des spectres <strong>ATR</strong> de sucres solides purs pour identifier les fonctions chimiques (bandes C-O, O-H).</li><li>Préparation de solutions aqueuses et analyse spectrale avec correction du signal de l'eau.</li><li>Tentative de construction de droites d'étalonnage (Absorbance vs Concentration) pour des mélanges de sucres.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">L'ATR-IR s'est révélée très efficace pour l'identification qualitative rapide des sucres. Bien que la quantification soit plus délicate, nous avons observé une relation linéaire prometteuse pour les concentrations élevées.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Microbiologie -->
+                        <div class="w-full">
+                            <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-green-600 hover:bg-green-700 text-white shadow-md">
+                                <span>Microbiologie</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="flex flex-col gap-3 p-2">
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>TP1 : Découverte et Techniques (7h)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/13.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/14.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Se familiariser avec le monde microbien : techniques de culture, facteurs de croissance, dénombrement et identification, tout en respectant strictement les règles d'hygiène et de sécurité (asepsie).</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li><strong>Séance 1 :</strong> Coulage de géloses PCA, observation de bouillons (E. coli, S. aureus) et repiquage sur milieux spécifiques (Chapman, Viande-Levure) pour tester la température, la pression osmotique et l'O2. Méthode des cadrans pour l'isolement.</li><li>Dénombrement de la flore du lait (cru, pasteurisé) et yaourt par dilutions en cascade (10<sup>0</sup> à 10<sup>-6</sup>).</li><li>Tests d'hygiène : empreintes de doigts, cheveux sur gélose, pétrifilm sur surfaces et utilisation d'un ATPmètre pour contrôler les paillasses.</li><li><strong>Séance 2 :</strong> Lecture des résultats, calcul des dénombrements, tests biochimiques (oxydase, catalase) et observations microscopiques (état frais, coloration de Gram).</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Ce TP nous a permis de maîtriser la manipulation aseptique, de différencier les bactéries Gram+ (S. aureus) et Gram- (E. coli), de comprendre l'influence du milieu sur la croissance et de quantifier la charge microbienne.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>TP2 : Analyse Bactériologique (3 séances)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/15.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/16.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Réaliser une analyse bactériologique complète d'une eau de consommation selon les normes en vigueur et identifier une souche d'entérobactérie via une galerie biochimique standardisée.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li><strong>Analyse de l'eau :</strong> Recherche des germes témoins de contamination fécale sur 3 séances.<ul class="list-disc list-inside pl-4 text-xs"><li>J1 : Ensemencement flore revivifiable (20°C/37°C), Coliformes totaux (Bouillon lactosé BCP), Streptocoques fécaux (Rothe) et Anaérobies sulfito-réducteurs (après choc thermique 80°C).</li><li>J2 : Repiquage des positifs sur milieux sélectifs (Schubert à 44°C, Litsky) et lecture des géloses.</li><li>J3 : Test de l'Indole (Kovacs) pour E. coli, lecture finale et calcul du NPP (Nombre le Plus Probable).</li></ul></li><li><strong>Identification :</strong> Utilisation d'une galerie <strong>API 20E</strong>. Préparation de l'inoculum et lecture des 20 tests biochimiques pour déterminer le profil de la bactérie.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Nous avons pu statuer sur la potabilité de l'eau en comparant nos résultats (NPP) aux normes. La galerie API nous a permis d'identifier précisément l'espèce bactérienne inconnue grâce à son profil biochimique.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Chimie Thermodynamique -->
+                        <div class="w-full">
+                            <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-red-500 hover:bg-red-600 text-white shadow-md">
+                                <span>Chimie Thermodynamique</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="flex flex-col gap-3 p-2">
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Détermination constante d’équilibre (Potentiométrie)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/17.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/18.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Déterminer la constante de formation du complexe diamine argent Ag(NH3)2+ par potentiométrie et vérifier la loi de Nernst à l'aide d'une pile de concentration.</p></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Vérification préalable des titres des solutions (dosage de l'ammoniac par HCl et des ions Ag+ par la méthode de Mohr).</li><li>Construction d'une pile de concentration avec deux électrodes d'argent et vérification de la loi de Nernst par dilutions successives.</li><li>Suivi potentiométrique de la formation du complexe par ajout progressif d'ammoniac dans la solution d'ions argent.</li></ul></div></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Les mesures de potentiel nous ont permis de calculer les concentrations à l'équilibre. Nous avons ainsi déterminé la constante de stabilité du complexe et l'enthalpie libre standard de réaction.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Étude d’un équilibre de solubilité (Ca(OH)2)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                <div class="text-left space-y-5">
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Déterminer le produit de solubilité (Ks) de l'hydroxyde de calcium à différentes températures afin d'en déduire les grandeurs thermodynamiques (Enthalpie et Entropie de réaction).</p></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Préparation de solutions saturées de Ca(OH)2 à température ambiante, 50°C, 70°C et 90°C.</li><li>Filtration et dosage des ions hydroxydes (par HCl) et calcium (par EDTA) pour chaque température.</li><li>Calcul de la solubilité et du Ks pour chaque point.</li><li>Exploitation graphique selon la loi de Van't Hoff (ln Ks en fonction de 1/T).</li></ul></div></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Nous avons observé l'évolution de la solubilité avec la température. Le tracé de Van't Hoff nous a permis d'extraire l'enthalpie et l'entropie standards de la réaction de dissolution.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Initiation à la Régulation -->
+                        <div class="w-full">
+                            <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-purple-600 hover:bg-purple-700 text-white shadow-md">
+                                <span>Initiation à la Régulation</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="flex flex-col gap-3 p-2">
+                                     <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Régulateur PID (Simulation LabVIEW)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                  <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/19.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/20.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+
+                                                 <div class="text-left space-y-5">
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Étudier l'influence des paramètres Gr (Gain), Ti (Intégrale) et Td (Dérivée) sur la précision et le temps de réponse d'un procédé. Mettre au point les réglages d'un régulateur PID par la méthode des approches successives via un simulateur.</p></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li><strong>Étude en Boucle Ouverte :</strong> Analyse de la réaction du procédé (1er ordre) face à des perturbations de charge (+/- 10%) et détermination de la plage de variation.</li><li><strong>Pilotage Manuel vs Automatique :</strong> Tentative de maintien de la consigne manuellement face aux perturbations, puis comparaison avec l'action du régulateur.</li><li><strong>Influence des paramètres :</strong> Analyse de l'impact de <em>Gr</em> (action P) sur le dépassement et l'erreur statique, puis de <em>Ti</em> (action I) sur la précision.</li><li><strong>Réglage par approches successives :</strong> Méthodologie appliquée sur un système du 2nd ordre : réglage de P pour un dépassement de ~10%, ajout de D pour réduire le dépassement à ~3%, et ajustement de I pour la précision finale.</li></ul></div></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">La simulation a mis en évidence qu'un gain trop fort déstabilise le système, que l'action intégrale est indispensable pour annuler l'erreur statique, et que la dérivée permet d'anticiper. La méthode des approches successives a permis d'obtenir un compromis optimal entre rapidité, stabilité et précision.</p></div>
+                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Réacteurs -->
+                        <div class="w-full">
+                            <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-orange-500 hover:bg-orange-600 text-white shadow-md">
+                                <span>Réacteurs</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="flex flex-col gap-3 p-2">
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Synthèse de l’acide benzoïque</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/21.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/22.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Produire environ 10 moles d'acide benzoïque par réaction de précipitation et maîtriser les opérations de filtration industrielle et de calculs de rendements.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Dissolution de 1,6 kg de <strong>Benzoate de Sodium</strong> dans un réacteur agité avec de l'eau.</li><li>Préparation d'une solution diluée d'acide sulfurique.</li><li>Réalisation de la réaction de synthèse : <em>2 C6H5CO2Na + H2SO4 → 2 C6H5CO2H + Na2SO4</em>.</li><li><strong>Filtration</strong> de la suspension obtenue sur filtre-presse pour séparer le gâteau d'acide benzoïque du filtrat.</li><li>Essorage à l'air comprimé, séchage à l'étuve et calculs du bilan massique et du rendement.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">La manipulation a permis d'illustrer concrètement la production d'un solide par voie chimique. L'utilisation du filtre-presse a mis en évidence l'importance de la séparation liquide-solide dans les procédés industriels.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Etude d'un pilote d'agitation monophasique</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/23.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/24.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Caractériser le fonctionnement d'une cuve agitée, déterminer l'influence du type de mobile (Axial vs Radial) et des chicanes sur la puissance consommée, le vortex et le temps de mélange.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Comparaison de deux mobiles : <strong>Turbine Rushton</strong> (flux radial) et <strong>Hélice Marine</strong> (flux axial).</li><li>Mesure du couple en fonction de la vitesse de rotation pour déterminer le Nombre de Puissance (<em>Np</em>) en régime turbulent.</li><li>Observation et mesure de la hauteur du <strong>vortex</strong> en l'absence de chicanes.</li><li>Mesure du <strong>temps de mélange</strong> (tm) par conductimétrie suite à l'injection d'un traceur salin (NaCl).</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Nous avons vérifié que la Turbine Rushton consomme plus de puissance (Np élevé) que l'hélice. L'ajout de chicanes est indispensable pour briser le vortex et transformer le mouvement tangentiel en turbulence efficace pour le mélange.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Etude pratique réacteur fermé (Saponification)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Étudier cinétiquement la réaction de saponification de l'acétate d'éthyle par la soude en réacteur fermé (Batch) et valider le modèle d'ordre 2 par suivi conductimétrique.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Réaction : <em>AcOEt + NaOH → EtOH + NaOAc</em>.</li><li>Utilisation d'un réacteur parfaitement agité discontinu avec un excès de soude (ou proportions stœchiométriques).</li><li>Suivi de la conductivité de la solution au cours du temps. La baisse de conductivité est liée à la consommation des ions OH- (très conducteurs) et formation d'ions Acétate (moins conducteurs).</li><li>Calcul de l'avancement X(t) à partir de la conductivité et comparaison avec le modèle théorique cinétique.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">La méthode conductimétrique s'est avérée précise pour suivre cette réaction rapide. Les résultats expérimentaux ont confirmé la cinétique globale d'ordre 2 de la saponification.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Etude pratique réacteurs continus (RCPA vs Piston)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/25.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/26.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Comparer les performances (taux de conversion) de deux types de réacteurs ouverts : le Réacteur Continu Parfaitement Agité (RCPA) et le Réacteur Piston (Tubulaire).</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li>Mise en œuvre de la même réaction de saponification en régime permanent.</li><li>Alimentation continue des réactifs dans un RCPA mécanique et un Tube rempli de billes (Piston).</li><li>Mesure de la conductivité en sortie pour déterminer la conversion finale.</li><li>Comparaison des conversions obtenues pour un même temps de passage (τ) avec les modèles idéaux.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Pour un même temps de séjour, le réacteur Piston a montré une conversion supérieure au RCPA, se rapprochant du comportement du réacteur fermé, ce qui est conforme à la théorie des réacteurs idéaux.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. Technologies de Séparation -->
+                        <div class="w-full">
+                            <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-teal-600 hover:bg-teal-700 text-white shadow-md">
+                                <span>Technologies de Séparation</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="flex flex-col gap-3 p-2">
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Absorption Gaz - Liquide</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/27.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/28.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Étudier l'hydrodynamique d'une colonne à garnissage (pertes de charge, engorgement) et réaliser l'absorption de l'ammoniac (NH3) contenu dans l'air par de l'eau en contre-courant. Déterminer l'efficacité de la colonne via les concepts de NUT et HUT.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li><strong>Hydrodynamique :</strong> Mesure des pertes de charge en fonction des débits de gaz et de liquide pour identifier les points de charge et d'engorgement du garnissage (Anneaux Raschig).</li><li><strong>Absorption :</strong> Mise en contact air+NH3 et eau à contre-courant. Suivi de l'établissement du régime permanent.</li><li><strong>Analyses :</strong> Titrage de l'ammoniac dans le liquide de sortie. Analyse du gaz de sortie par piégeage dans des barboteurs acides (HCl) et dosage en retour.</li><li><strong>Calculs :</strong> Bilan matière, détermination du rendement, calcul du Nombre d'Unités de Transfert (NUT) et de la Hauteur d'une Unité de Transfert (HUT).</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Ce TP a permis de dimensionner l'efficacité d'une colonne à garnissage. Nous avons observé que l'efficacité du transfert dépend fortement de l'hydrodynamique et de la surface de contact offerte par le garnissage.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>Traitement de l'eau (Coagulation-Floculation-Décantation)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                            <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/29.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/30.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                <div class="text-left space-y-5">
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Optimiser le processus de clarification d'une eau chargée (modèle amidon) par coagulation-floculation. Déterminer les conditions optimales par Jar-Test et les appliquer sur un pilote industriel continu.</p></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li><strong>Jar-Tests (Essais Batch) :</strong> Comparaison de l'efficacité de coagulants (Al2(SO4)3 VS FeCl3) et détermination de la dose optimale pour annuler le potentiel Zêta.</li><li><strong>Floculation :</strong> Ajout de soude pour ajuster le pH et favoriser la formation de flocs d'hydroxydes décantables.</li><li><strong>Analyse :</strong> Suivi de la turbidité et de la vitesse de décantation (Courbes de Kynch, Loi de Stokes).</li><li><strong>Pilote Continu (MP 50) :</strong> Transposition des paramètres (débits réactifs) pour traiter un flux continu d'eau polluée.</li></ul></div></div>
+                                                    <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">L'étude a montré que la neutralisation des charges colloïdales est cruciale pour l'agrégation. Le passage du laboratoire (Jar-Test) au pilote industriel a validé la méthodologie de dimensionnement des stations de traitement d'eau.</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. SAÉs -->
+                        <div class="w-full">
+                            <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">
+                                <span>SAÉs (Situation d'Apprentissage et d'Évaluation)</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="flex flex-col gap-3 p-2">
+                                    <!-- SAÉ 3.1 -->
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>SAÉ 3.1 : Conduite et analyse critique (Réacteur & Absorption)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                             <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/33.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/34.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                 <div class="text-left space-y-5">
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Conduire et analyser de manière critique deux unités de production représentatives du Génie Chimique : un Réacteur industriel et une Colonne d'Absorption. L'objectif est de modéliser le fonctionnement, de proposer des protocoles de conduite et de confronter la théorie (dimensionnement) à la pratique.</p></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><div class="space-y-4"><div><h5 class="font-bold text-indigo-700">Partie 1 : Réacteur (A → B)</h5><ul class="list-disc list-inside space-y-1"><li><strong>Modélisation Continue Isotherme :</strong> Établissement des équations de bilan matière et thermique pour un réacteur continu parfaitement agité (1,5 m³) avec une réaction de 1er ordre. Tracé du taux de conversion en fonction de la température (20-120°C).</li><li><strong>Modélisation Continue Adiabatique :</strong> Identification du point de fonctionnement (Conversion, Température) par résolution graphique des bilans matière et enthalpique (avec T entrée = 38°C).</li><li><strong>Modélisation Batch Adiabatique :</strong> Adaptation des équations au fonctionnement discontinu et analyse de la température finale à conversion totale pour évaluer le risque d'emballement thermique.</li></ul></div><div><h5 class="font-bold text-indigo-700">Partie 2 : Absorption (Ammoniac)</h5><ul class="list-disc list-inside space-y-1"><li><strong>Conduite :</strong> Réalisation d'un schéma PID détaillé (Instrumentation/Robinetterie) et rédaction d'un protocole de démarrage/arrêt pour opérateur.</li><li><strong>Dimensionnement Théorique :</strong> Calcul du débit liquide minimum (L/min) et du nombre d'étages théoriques pour abattre 99% de NH3.</li><li><strong>Dimensionnement Hydrodynamique :</strong> Détermination du diamètre de colonne (Diagramme d'Eckert) et des pertes de charge (Corrélation de Leva).</li><li><strong>Hauteur de Garnissage :</strong> Calcul de la hauteur théorique via la méthode NUT/HUT (Nombre et Hauteur d'Unités de Transfert) et comparaison avec la hauteur réelle du pilote.</li></ul></div></div></div></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">Cette SAÉ nous a permis de passer du stade expérimental au stade ingénierie. Nous avons mis en évidence les divergences entre le dimensionnement théorique idéal et la réalité du pilote industriel, soulignant l'importance des facteurs de sécurité et de l'hydrodynamique réelle.</p></div>
+                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- SAÉ 3.2 -->
+                                    <div class="w-full">
+                                        <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-sm md:text-base border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800">
+                                            <span>SAÉ 3.2 : Étude de réactions d’estérification (Cinétique)</span>
+                                            <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                                        </button>
+                                        <div class="accordion-content">
+                                             <div class="bg-white p-4 rounded-b-lg border-x border-b border-gray-200">
+                                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/31.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/32.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                                                 <div class="text-left space-y-5">
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Objectifs</h4><p class="text-gray-600 text-sm leading-relaxed">Étudier la cinétique et la thermodynamique d'une réaction d'estérification (Alcool + Acide Carboxylique ⇌ Ester + Eau) en réacteur fermé. L'objectif est d'identifier les conditions opératoires (Température, Catalyseur, Excès) permettant d'optimiser la vitesse de réaction et le rendement final.</p></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Ce qu’on a fait</h4><div class="text-gray-600 text-sm leading-relaxed tp-action"><ul class="list-disc list-inside space-y-1"><li><strong>Plan d'expérience :</strong> Étude de l'influence de trois paramètres clés :<ul class="list-disc list-inside pl-4 text-xs"><li>Présence de catalyseur (Acide Sulfurique).</li><li>Température (Ambiante vs Chauffage au bain-marie).</li><li>Proportions initiales (Mélange équimolaire vs Excès d'un réactif).</li></ul></li><li><strong>Suivi Cinétique :</strong> Réalisation de la réaction en tubes à essais avec trempe chimique (eau glacée) à différents instants pour figer l'équilibre.</li><li><strong>Dosage :</strong> Titrage de l'acide acétique restant par la soude (NaOH) en présence de phénolphtaléine pour déterminer l'avancement au cours du temps.</li><li><strong>Modélisation :</strong> Détermination des constantes de vitesse (K1 réaction directe, K2 réaction inverse), de la constante d'équilibre (Kc) et du taux de conversion à l'équilibre.</li></ul></div></div>
+                                                     <div><h4 class="text-lg font-bold text-azul mb-2 border-b border-gray-100 pb-1">Conclusion</h4><p class="text-gray-600 text-sm leading-relaxed">L'étude a confirmé que le catalyseur et la température accélèrent la cinétique sans modifier l'état final, tandis que l'excès de réactif permet de déplacer l'équilibre (Loi de Le Chatelier) et d'augmenter le rendement de production de l'ester.</p></div>
+                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERIENCE SECTION -->
+        <section id="xp" class="py-20 px-4 bg-white text-center">
+            <h2 class="text-3xl font-bold mb-10 text-black">Expériences professionnelles</h2>
+
+            <div class="space-y-4 max-w-3xl mx-auto">
+                <div class="w-full">
+                     <button class="accordion-btn w-full flex justify-between items-center px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-300 bg-azul hover:bg-azul-dark text-white" aria-expanded="true">
+                        <span>Employé polyvalent - Chez Carrefour</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 chevron-icon"></i>
+                    </button>
+                    <div class="accordion-content open bg-gray-50/50 rounded-lg border border-gray-200">
+                         <div class="flex flex-col md:flex-row gap-4 mb-6">
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/36.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                    <div class="w-full md:w-1/2 h-48 bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group"><img src="./images/35.png" class="w-full h-full object-cover" alt="TP"></div>
+                                                </div>
+                        <div class="p-4 text-left">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-200 pb-2">
+                                <h3 class="text-xl font-bold text-azul flex items-center gap-2">
+                                    <i data-lucide="briefcase" class="w-5 h-5"></i> Carrefour Saint-Nazaire
+                                </h3>
+                                <span class="text-sm text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full mt-2 sm:mt-0">
+                                    Juin 2025 – Août 2025
+                                </span>
+                            </div>
+                            
+                            <p class="text-gray-600 italic mb-4">
+                                Expérience saisonnière nécessitant autonomie et réactivité dans un environnement dynamique.
+                            </p>
+
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <span class="mr-2 text-azul mt-1.5 font-bold">•</span>
+                                    <span><strong>Relation Client :</strong> Accueil, conseil et orientation des clients dans le magasin, gestion des demandes avec courtoisie.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-2 text-azul mt-1.5 font-bold">•</span>
+                                    <span><strong>Logistique & Gestion :</strong> Mise en rayon efficace (produits frais et secs), rotation des stocks (FIFO) et contrôle rigoureux des dates de péremption pour limiter le gaspillage.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-2 text-azul mt-1.5 font-bold">•</span>
+                                    <span><strong>Organisation :</strong> Maintien de la propreté et du rangement des rayons pour assurer la sécurité et l'attractivité du magasin.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-2 text-azul mt-1.5 font-bold">•</span>
+                                    <span><strong>Savoir-être :</strong> Grande adaptabilité aux horaires et polyvalence selon les besoins de l’équipe (caisse, rayon, réserve).</span>
+                                </li>
+                            </ul>
+
+                            <div class="mt-6 pt-4 border-t border-gray-100">
+                                <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">Compétences développées</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">Gestion du stress</span>
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">Travail en équipe</span>
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">Autonomie</span>
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">Rigueur</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contato" class="py-20 px-4 bg-cinza-claro">
+            <h2 class="text-3xl font-bold mb-10 text-center text-black">Contactez moi</h2>
+            
+            <div class="flex flex-wrap justify-center items-stretch gap-6">
+                <!-- Email Card -->
+                <div class="w-80 p-6 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 shadow-xl flex flex-col items-center justify-center transition-transform duration-300 hover:scale-105 group hover:bg-white/30">
+                    <a href="mailto:waldemar.d-orey@etu.univ-nantes.fr?subject=Contact%20depuis%20portfolio" class="text-center w-full">
+                        <div class="text-azul mb-4 transform transition-transform duration-500 group-hover:-translate-y-2 flex justify-center">
+                            <i data-lucide="mail" class="w-12 h-12"></i>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Adresse e-mail</h3>
+                        <span class="text-sm text-gray-800 break-words hover:text-azul transition-colors">
+                            waldemar.d-orey@etu.univ-nantes.fr
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Phone Card -->
+                <div class="w-80 p-6 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 shadow-xl flex flex-col items-center justify-center transition-transform duration-300 hover:scale-105 group hover:bg-white/30">
+                    <div class="text-azul mb-4 transform transition-transform duration-500 group-hover:-translate-y-2 flex justify-center">
+                        <i data-lucide="phone" class="w-12 h-12"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Appelez moi</h3>
+                    <span class="text-base text-gray-800 font-semibold">+33 633-894-725</span>
+                </div>
+
+                <!-- Address Card -->
+                <div class="w-80 p-6 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 shadow-xl flex flex-col items-center justify-center transition-transform duration-300 hover:scale-105 group hover:bg-white/30">
+                    <a href="https://maps.app.goo.gl/ioGiSnubag4V3UTj8" target="_blank" rel="noopener noreferrer" class="text-center w-full">
+                        <div class="text-azul mb-4 transform transition-transform duration-500 group-hover:-translate-y-2 flex justify-center">
+                            <i data-lucide="map-pin" class="w-12 h-12"></i>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Adresse</h3>
+                        <p class="text-sm text-gray-800 hover:text-azul transition-colors">
+                            60 RUE MICHEL ANGE,<br/>Saint-Nazaire, 44600,<br/>France
+                        </p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#000016] text-white py-8 text-center">
+        <span class="block text-xl font-semibold mb-2">Waldemar d'Orey</span>
+        <p class="text-sm text-gray-400">Copyright @2025. All Rights Reserved.</p>
+    </footer>
+
+    <!-- LOGIQUE JAVASCRIPT -->
+    <script>
+      // 1. Initialiser les icônes Lucide
+      lucide.createIcons();
+
+      // 2. Logique du Menu Mobile
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const iconMenu = document.querySelector('.icon-menu');
+      const iconX = document.querySelector('.icon-x');
+      const mobileLinks = document.querySelectorAll('.mobile-link');
+
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+          const isHidden = mobileMenu.classList.contains('hidden');
+          if (isHidden) {
+            mobileMenu.classList.remove('hidden');
+            iconMenu.classList.add('hidden');
+            iconX.classList.remove('hidden');
+          } else {
+            mobileMenu.classList.add('hidden');
+            iconMenu.classList.remove('hidden');
+            iconX.classList.add('hidden');
+          }
+        });
+
+        // Fermer le menu quand on clique sur un lien
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                iconMenu.classList.remove('hidden');
+                iconX.classList.add('hidden');
+            });
+        });
+      }
+
+      // 3. Logique des Accordéons
+      const accordionBtns = document.querySelectorAll('.accordion-btn');
+
+      accordionBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const content = this.nextElementSibling;
+          
+          // Toggle la classe 'open' sur le contenu
+          const isOpen = content.classList.contains('open');
+          
+          if (isOpen) {
+            content.classList.remove('open');
+            this.setAttribute('aria-expanded', 'false');
+          } else {
+            content.classList.add('open');
+            this.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    </script>
+</body>
 </html>
